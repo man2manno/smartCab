@@ -11,6 +11,8 @@ class LearningAgent(Agent):
         self.color = 'red'  # override color
         self.planner = RoutePlanner(self.env, self)  # simple route planner to get next_waypoint
         # TODO: Initialize any additional variables here
+        self.Q = {}
+        self.actions = {}
 
     def reset(self, destination=None):
         self.planner.route_to(destination)
@@ -27,8 +29,8 @@ class LearningAgent(Agent):
 	#print 'Current State: {}'.format(self.state)
         
         # TODO: Select action according to your policy
-        #action = random.choice([None,'forward','left','right'])
-
+        action = random.choice([None,'forward','left','right'])
+        """
         if (self.state[0] == 'red' and (self.state[1] == 'forward' or self.state[1] == 'left')) or \
                 (self.state[0] == 'red' and self.state[1] == 'right' and self.state[2] == 'forward') or \
                 (self.state[0] == 'green' and self.state[1] == 'left' and self.state[3] == 'forward') or \
@@ -36,12 +38,17 @@ class LearningAgent(Agent):
             action = None
         else:
             action = self.state[1]
-            
+        """
         # Execute action and get reward
         reward = self.env.act(self, action)
         # TODO: Learn policy based on state, action, reward
+        def choose_best_action(self, state):
+            actions = [None, 'left', 'right', 'forward']
+            self.Q[(state,action)] = reward
 
-        print "LearningAgent.update(): deadline = {}, inputs = {}, action = {}, reward = {}".format(deadline, inputs, action, reward)  # [debug]
+        #print self.Q[self.state][action]
+
+        #print "LearningAgent.update(): deadline = {}, inputs = {}, action = {}, reward = {}".format(deadline, inputs, action, reward)  # [debug]
 
 
 def run():
