@@ -23,24 +23,20 @@ class LearningAgent(Agent):
         deadline = self.env.get_deadline(self)
 
         # TODO: Update state
-	self.state = (inputs['light'],self.next_waypoint)
+	self.state = (inputs['light'], self.next_waypoint, inputs['left'], inputs['oncoming'])
 	#print 'Current State: {}'.format(self.state)
         
         # TODO: Select action according to your policy
         #action = random.choice([None,'forward','left','right'])
-        if inputs['light'] == 'green' and (inputs['oncoming'] != 'forward' or inputs['oncoming'] != 'right') and self.state[1] == 'left':
-            action = 'left'
-	elif inputs['light'] == 'green' and self.state[1] == 'right':
-		action = 'right'
-        elif inputs['light'] == 'green' and self.state[1] == 'forward':
-            action = 'forward'
-        elif inputs['light'] == 'red' and (self.state[1] == 'forward' or self.state[1] == 'left'):
-            action = None
-        elif inputs['light'] == 'red' and self.state[1] == 'right' and inputs['oncoming'] != 'left' and inputs['left'] != 'forward':
-            action = 'right'
-	else:
-            action = self.state[1]
 
+        if (self.state[0] == 'red' and (self.state[1] == 'forward' or self.state[1] == 'left')) or \
+                (self.state[0] == 'red' and self.state[1] == 'right' and self.state[2] == 'forward') or \
+                (self.state[0] == 'green' and self.state[1] == 'left' and self.state[3] == 'forward') or \
+                (self.state[0] == 'green' and self.state[1] == 'left' and self.state[3] == 'right'):
+            action = None
+        else:
+            action = self.state[1]
+            
         # Execute action and get reward
         reward = self.env.act(self, action)
         # TODO: Learn policy based on state, action, reward
@@ -58,7 +54,7 @@ def run():
     # NOTE: You can set enforce_deadline=False while debugging to allow longer trials
 
     # Now simulate it
-    sim = Simulator(e, update_delay=1, display=True)  # create simulator (uses pygame when display=True, if available)
+    sim = Simulator(e, update_delay=0.5, display=True)  # create simulator (uses pygame when display=True, if available)
     # NOTE: To speed up simulation, reduce update_delay and/or set display=False
 
     sim.run(n_trials=10)  # run for a specified number of trials
