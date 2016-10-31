@@ -30,6 +30,8 @@ class LearningAgent(Agent):
         
         # TODO: Select action according to your policy
         action = random.choice([None,'forward','left','right'])
+	# Implement Choose best action here, reward comes after
+	
         """
         if (self.state[0] == 'red' and (self.state[1] == 'forward' or self.state[1] == 'left')) or \
                 (self.state[0] == 'red' and self.state[1] == 'right' and self.state[2] == 'forward') or \
@@ -42,10 +44,18 @@ class LearningAgent(Agent):
         # Execute action and get reward
         reward = self.env.act(self, action)
         # TODO: Learn policy based on state, action, reward
-        def choose_best_action(self, state):
-            actions = [None, 'left', 'right', 'forward']
-            self.Q[(state,action)] = reward
+        #def choose_best_action(self, state):
+	
+	actions = [None,'left','right','forward']
+	if state not in self.Q.keys():
+		actions_dict = {}
+		for a in actions:
+			actions_dict[a] = -float('inf')
+		self.Q[state] = actions_dict
+	self.Q[state][action] = reward
+	#self.Q[state][action] = (1 - 0.2) * self.Q[state][action] + 0.2*(reward + 0.9*max(Q))
 
+		
         #print self.Q[self.state][action]
 
         #print "LearningAgent.update(): deadline = {}, inputs = {}, action = {}, reward = {}".format(deadline, inputs, action, reward)  # [debug]
