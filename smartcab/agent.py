@@ -14,10 +14,12 @@ class LearningAgent(Agent):
         # TODO: Initialize any additional variables here
         self.successes = []
         self.Q = {}
+        self.numOfStates = 0
         self.time = 0.0
         self.alpha = 1.0
         self.gamma = 0.9
         self.eplison = 1.0
+        self.oFile = open('log.txt','w')
     def reset(self, destination=None):
         self.planner.route_to(destination)
         # TODO: Prepare for a new trip; reset any variables here, if required
@@ -46,9 +48,10 @@ class LearningAgent(Agent):
             # Find max value for all actions
             maxQ = max(self.Q[state].values())
             count = self.Q[state].values().count(maxQ)
-
-            if random.random() < self.eplison:
-                print 'Randomly Chosen'
+            rand = random.random()
+            if rand < self.eplison:
+                best_action = random.choice([None,'left','right','forward'])
+            elif count > 1 and rand >= self.eplison:
                 # Choose randomly between best actions
                 options = [i for i in self.Q[state].keys() if self.Q[state][i] == maxQ]
                 best_action = random.choice(options)
@@ -75,7 +78,7 @@ class LearningAgent(Agent):
         _destination = self.env.agent_states[self]["destination"]
         if _location == _destination:
             self.successes.append(True)
-            print len(self.successes)
+            print 'Number of Successes = ' + str(len(self.successes))
 
         # TODO: Learn policy based on state, action, reward
         # Update Learning Decay Rate -- Alpha
@@ -87,7 +90,9 @@ class LearningAgent(Agent):
    
 	# Updated Q-Table
 	self.Q[self.state][action] = (1 - self.alpha) * self.Q[self.state][action] + self.alpha*(reward + self.gamma * max(self.Q[self.state].values()))
-        print self.Q[self.state].values()
+        if len(self.Q.keys()) != self.numOfStates:
+            self.numOfStates = len(self.Q.keys())
+            self.oFile.write('Number of States = ' + str(len(self.Q.keys())) + '\n')
 
         #print "LearningAgent.update(): deadline = {}, inputs = {}, action = {}, reward = {}".format(deadline, inputs, action, reward)  # [debug]
 
@@ -102,10 +107,10 @@ def run():
     # NOTE: You can set enforce_deadline=False while debugging to allow longer trials
 
     # Now simulate it
-    sim = Simulator(e, update_delay=0.5, display=False)  # create simulator (uses pygame when display=True, if available)
+    sim = Simulator(e, update_delay=0.1, display=False)  # create simulator (uses pygame when display=True, if available)
     # NOTE: To speed up simulation, reduce update_delay and/or set display=False
 
-    sim.run(n_trials=10)  # run for a specified number of trials
+    sim.run(n_trials=100)  # run for a specified number of trials
     # NOTE: To quit midway, press Esc or close pygame window, or hit Ctrl+C on the command-line
 
 
