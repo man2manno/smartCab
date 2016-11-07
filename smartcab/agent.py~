@@ -20,16 +20,9 @@ class LearningAgent(Agent):
         self.gamma = 0.9
         self.eplison = 1.0
         self.oFile = open('log.txt','w')
-        self.iterations = 0
-        self.write = False
-
     def reset(self, destination=None):
         self.planner.route_to(destination)
         # TODO: Prepare for a new trip; reset any variables here, if required
-        self.iterations += 1
-        if self.iterations == 100:
-            self.write = True
-        
 
     def update(self, t):
         # Gather inputs
@@ -100,15 +93,6 @@ class LearningAgent(Agent):
         if len(self.Q.keys()) != self.numOfStates:
             self.numOfStates = len(self.Q.keys())
             self.oFile.write('Number of States = ' + str(len(self.Q.keys())) + '\n')
-        """
-        if self.write:
-            for state in self.Q.keys():
-                self.oFile.write('State: ' + str(state) + ' ===>\n')
-                self.oFile.write('\t\tAction: ' + str(choose_best_action(self,state)) + '\n')
-            self.write = False
-        """
-        if self.iterations >= 90 and reward < 0:
-            self.oFile.write('Inputs: ' + str(inputs) + '\n\tAction: ' + str(action) + '\t\tNext WYPT: ' + str(self.next_waypoint) + '\n')
 
         #print "LearningAgent.update(): deadline = {}, inputs = {}, action = {}, reward = {}".format(deadline, inputs, action, reward)  # [debug]
 
